@@ -1,35 +1,43 @@
 package com.michal.demo.services
 
 import java.time.{Instant, LocalDateTime}
+import java.util.UUID
 
-import com.michal.demo.Domain.ScreeningId
+import com.michal.demo.domain.Domain.ScreeningId
+import com.michal.demo.domain.ScreeningRepository
+import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future
 
 case class ScreeningData(
                           id: ScreeningId,
-                         title: String,
-                         start: LocalDateTime,
-                         durationMinutes: Int,
-                         bookingAvailable: Boolean
+                          title: String,
+                          start: LocalDateTime,
+                          durationMinutes: Int
                         )
 
-class SearchScreeningsService {
+class SearchScreeningsService(
+                               db: Database,
+                               screeningRepository: ScreeningRepository
+                             ) {
   def search(from: Instant, to: Instant): Future[List[ScreeningData]] = {
+    db.run(
+      screeningRepository.findScreenings(from, to)
+    )
+
     Future.successful(List(
       ScreeningData(
-        ScreeningId(150),
+        ScreeningId(UUID.randomUUID()),
         "Matrix reanimacja",
         LocalDateTime.now(),
-        62,
-        bookingAvailable = false
+        62
+
       ),
       ScreeningData(
-        ScreeningId(159),
+        ScreeningId(UUID.randomUUID()),
         "Matrix reanimacja",
-        LocalDateTime.now().plusSeconds(3*60*60),
-        62,
-        bookingAvailable = true
+        LocalDateTime.now().plusSeconds(3 * 60 * 60),
+        62
       )
     ))
   }

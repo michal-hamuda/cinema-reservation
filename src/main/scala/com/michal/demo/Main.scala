@@ -1,11 +1,10 @@
 package com.michal.demo
 
-import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 
 import scala.util.{Failure, Success}
 
-object Main extends Application  {
+object Main extends Application {
   def main(args: Array[String]): Unit = {
     println("This is the demo, and the year is 2022")
 
