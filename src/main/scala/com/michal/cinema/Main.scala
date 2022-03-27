@@ -1,4 +1,4 @@
-package com.michal.demo
+package com.michal.cinema
 
 import akka.http.scaladsl.Http
 

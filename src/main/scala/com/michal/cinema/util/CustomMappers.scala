@@ -1,8 +1,8 @@
-package com.michal.demo.domain
+package com.michal.cinema.util
 
 import java.util.UUID
 
-import com.michal.demo.domain.Domain._
+import com.michal.cinema.screenings.domain.Domain._
 import slick.jdbc.H2Profile.api._
 
 object CustomMappers {

@@ -1,4 +1,4 @@
-package com.michal.demo.domain
+package com.michal.cinema.screenings.domain
 
 import java.time.Instant
 import java.util.UUID

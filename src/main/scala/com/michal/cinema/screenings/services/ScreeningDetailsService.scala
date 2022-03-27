@@ -1,10 +1,11 @@
-package com.michal.demo.services
+package com.michal.cinema.screenings.services
 
 import java.util.UUID
 
 import cats.data.OptionT
-import com.michal.demo.domain.Domain.{ReservationItem, Room, Screening, ScreeningId}
-import com.michal.demo.domain.{ReservationItemRepository, RoomRepository, ScreeningRepository}
+import com.michal.cinema.reservations.domain.ReservationItemRepository
+import com.michal.cinema.screenings.domain.Domain.{ReservationItem, Room, Screening, ScreeningId}
+import com.michal.cinema.screenings.domain.{RoomRepository, ScreeningRepository}
 import com.rms.miu.slickcats.DBIOInstances._
 import slick.jdbc.H2Profile.api._
 

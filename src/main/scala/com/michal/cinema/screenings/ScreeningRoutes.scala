@@ -1,33 +1,37 @@
-package com.michal.demo
+package com.michal.cinema.screenings
 
 import java.time.Instant
-import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.util.Timeout
-import com.michal.demo.domain.Domain.ScreeningId
-import com.michal.demo.services.CreateReservationService.CreateReservationRequest
-import com.michal.demo.services.{CreateReservationService, ScreeningDetailsService, SearchScreeningsService}
+import com.michal.cinema.reservations.services.CreateReservationService
+import com.michal.cinema.reservations.services.CreateReservationService.CreateReservationRequest
+import com.michal.cinema.screenings.domain.Domain.ScreeningId
+import com.michal.cinema.screenings.services.{ScreeningDetailsService, SearchScreeningsService}
+import com.michal.cinema.util.JsonFormats
+
+import scala.concurrent.ExecutionContext
 
 class ScreeningRoutes(
-                       createReservationService: CreateReservationService,
                        screeningDetailsService: ScreeningDetailsService,
                        searchScreeningsService: SearchScreeningsService
-                     )(implicit val system: ActorSystem) extends JsonFormats {
+                     )(implicit val system: ActorSystem, ec: ExecutionContext) extends JsonFormats {
 
   import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
   import io.circe.generic.auto._
+  import io.circe.syntax._
 
   // If ask takes more time than this to complete the request is failed
   //  val aaa = system.settings.config
   //  val aaaeee = system.settings.config.getDuration("my-app.routes.ask-timeout")
-  //  private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
-  private implicit val timeout = Timeout(5, TimeUnit.SECONDS)
+//    private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
+//  private implicit val timeout = Timeout(5, TimeUnit.SECONDS)
 
 
-  val userRoutes: Route =
+  val routes: Route =
     pathPrefix("screenings") {
       (pathPrefix("search") & pathEnd) {
         get {
@@ -43,17 +47,9 @@ class ScreeningRoutes(
         (path(JavaUUID) & pathEnd) { id =>
           get {
             val idd = ScreeningId(id)
-            complete(screeningDetailsService.get(idd))
-          }
-        } ~
-        (pathPrefix("reserve") & pathEnd) {
-          post {
-            entity(as[CreateReservationRequest]) { request =>
-              complete(createReservationService.create(request))
-
-            }
+            complete(screeningDetailsService.get(idd).map(yy => StatusCodes.OK -> yy))
           }
         }
     }
-  //#all-routes
+
 }

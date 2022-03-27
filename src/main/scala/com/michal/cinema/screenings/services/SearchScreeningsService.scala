@@ -1,10 +1,10 @@
-package com.michal.demo.services
+package com.michal.cinema.screenings.services
 
 import java.time.{Instant, LocalDateTime}
 import java.util.UUID
 
-import com.michal.demo.domain.Domain.ScreeningId
-import com.michal.demo.domain.ScreeningRepository
+import com.michal.cinema.screenings.domain.Domain.ScreeningId
+import com.michal.cinema.screenings.domain.ScreeningRepository
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future

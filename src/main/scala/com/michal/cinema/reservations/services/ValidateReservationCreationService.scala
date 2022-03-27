@@ -1,10 +1,13 @@
-package com.michal.demo.services
+package com.michal.cinema.reservations.services
 
-import com.michal.demo.domain.Domain.Screening
-import com.michal.demo.services.CreateReservationService.{CreateReservationRequest, ErrorMessage, NewSeatReservation}
+import com.michal.cinema.reservations.ReservationConfig
+import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, ErrorMessage, NewSeatReservation}
+import com.michal.cinema.screenings.domain.Domain.Screening
+import com.michal.cinema.screenings.services.{ScreeningDetails, SeatStatus}
+import com.michal.cinema.util.DateTimeProvider
 
 class ValidateReservationCreationService(
-                                          priceConfig: PriceConfig,
+                                          priceConfig: ReservationConfig,
                                           dateTimeProvider: DateTimeProvider
                                         ) {
 

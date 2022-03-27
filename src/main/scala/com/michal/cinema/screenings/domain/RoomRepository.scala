@@ -1,7 +1,7 @@
-package com.michal.demo.domain
+package com.michal.cinema.screenings.domain
 
-import com.michal.demo.domain.CustomMappers._
-import com.michal.demo.domain.Domain.{Room, RoomId}
+import com.michal.cinema.util.CustomMappers._
+import com.michal.cinema.screenings.domain.Domain.{Room, RoomId}
 import slick.dbio.DBIO
 import slick.jdbc.H2Profile.api._
 

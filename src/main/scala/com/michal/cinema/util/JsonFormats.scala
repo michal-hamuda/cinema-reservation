@@ -1,11 +1,8 @@
-package com.michal.demo
+package com.michal.cinema.util
 
-import com.michal.demo.domain.Domain.PriceCategory
-import com.michal.demo.services.SeatStatus
+import com.michal.cinema.screenings.domain.Domain.PriceCategory
+import com.michal.cinema.screenings.services.SeatStatus
 import io.circe.{Decoder, Encoder}
-
-//#json-formats
-
 
 trait JsonFormats {
 
@@ -16,5 +13,3 @@ trait JsonFormats {
   implicit val priceCategoryEncoder: Encoder[PriceCategory.Value] = Encoder.encodeEnumeration(PriceCategory)
 
 }
-
-//#json-formats

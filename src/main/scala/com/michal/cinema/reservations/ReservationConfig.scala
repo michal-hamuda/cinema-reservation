@@ -1,8 +1,8 @@
-package com.michal.demo.services
+package com.michal.cinema.reservations
 
 import java.time.Duration
 
-case class PriceConfig(
+case class ReservationConfig(
                         childPrice: BigDecimal,
                         studentPrice: BigDecimal,
                         adultPrice: BigDecimal,

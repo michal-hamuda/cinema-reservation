@@ -1,10 +1,10 @@
-package com.michal.demo.domain
+package com.michal.cinema.screenings.domain
 
 import java.time.{Instant, LocalDateTime, ZoneId}
 
-import com.michal.demo.domain.CustomMappers._
-import com.michal.demo.domain.Domain.{Room, Screening, ScreeningId}
-import com.michal.demo.services.ScreeningData
+import com.michal.cinema.util.CustomMappers._
+import com.michal.cinema.screenings.domain.Domain.{Room, Screening, ScreeningId}
+import com.michal.cinema.screenings.services.ScreeningData
 import slick.dbio.DBIO
 import slick.jdbc.H2Profile.api._
 

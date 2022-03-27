@@ -1,6 +1,6 @@
-package com.michal.demo.domain
+package com.michal.cinema.reservations.domain
 
-import com.michal.demo.domain.Domain.Reservation
+import com.michal.cinema.screenings.domain.Domain.Reservation
 import slick.dbio.DBIO
 import slick.jdbc.H2Profile.api._
 

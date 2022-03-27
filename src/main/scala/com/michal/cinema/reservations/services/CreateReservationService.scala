@@ -1,12 +1,16 @@
-package com.michal.demo.services
+package com.michal.cinema.reservations.services
 
 import java.time.Instant
 
 import cats.data.EitherT
 import cats.implicits._
-import com.michal.demo.domain.Domain._
-import com.michal.demo.domain.{ReservationItemRepository, ReservationRepository, ScreeningRepository}
-import com.michal.demo.services.CreateReservationService.{CreateReservationRequest, CreateReservationResponse, ErrorMessage}
+import com.michal.cinema.reservations.ReservationConfig
+import com.michal.cinema.reservations.domain.{ReservationItemRepository, ReservationRepository}
+import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, CreateReservationResponse, ErrorMessage}
+import com.michal.cinema.screenings.domain.Domain._
+import com.michal.cinema.screenings.domain.ScreeningRepository
+import com.michal.cinema.screenings.services.{ScreeningDetails, ScreeningDetailsService}
+import com.michal.cinema.util.DateTimeProvider
 import com.rms.miu.slickcats.DBIOInstances._
 import slick.jdbc.H2Profile.api._
 
@@ -45,11 +49,11 @@ class CreateReservationService(
                                 reservationItemRepository: ReservationItemRepository,
                                 screeningDetailsService: ScreeningDetailsService,
                                 validateReservationCreationService: ValidateReservationCreationService,
-                                priceConfig: PriceConfig,
+                                priceConfig: ReservationConfig,
                                 dateTimeProvider: DateTimeProvider
                               )(implicit ec: ExecutionContext) {
-  def create(request: CreateReservationRequest): Future[Either[Error, CreateReservationResponse]] = {
-    val res = db.run((for {
+  def create(request: CreateReservationRequest): Future[Either[ErrorMessage, CreateReservationResponse]] = {
+    db.run((for {
       screening <- findScreening(request)
       screeningDetails <- findScreeningDetails(screening.id)
       _ <- EitherT.fromEither[DBIO](validateReservationCreationService.validate(request, screening, screeningDetails))
@@ -58,15 +62,6 @@ class CreateReservationService(
       _ <- insertReservationItems(items)
       response = createResponse(items)
     } yield response).value.transactionally)
-
-    Future.successful(
-      Right(
-        CreateReservationResponse(
-          BigDecimal(5.5),
-          Instant.now()
-        )
-      )
-    )
 
   }
 

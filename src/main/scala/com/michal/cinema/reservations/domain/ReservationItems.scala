@@ -1,7 +1,7 @@
-package com.michal.demo.domain
+package com.michal.cinema.reservations.domain
 
-import com.michal.demo.domain.CustomMappers._
-import com.michal.demo.domain.Domain.{PriceCategory, ReservationId, ReservationItem}
+import com.michal.cinema.util.CustomMappers._
+import com.michal.cinema.screenings.domain.Domain.{PriceCategory, ReservationId, ReservationItem}
 import slick.jdbc.H2Profile.api._
 
 class ReservationItems(tag: Tag) extends Table[ReservationItem](tag, "reservation_items") {

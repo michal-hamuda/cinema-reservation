@@ -1,9 +1,9 @@
-package com.michal.demo.domain
+package com.michal.cinema.screenings.domain
 
 import java.time.Instant
 
-import com.michal.demo.domain.CustomMappers._
-import com.michal.demo.domain.Domain.{MovieId, RoomId, Screening, ScreeningId}
+import com.michal.cinema.util.CustomMappers._
+import com.michal.cinema.screenings.domain.Domain.{MovieId, RoomId, Screening, ScreeningId}
 import slick.jdbc.H2Profile.api._
 
 class Screenings(tag: Tag) extends Table[Screening](tag, "screenings") {

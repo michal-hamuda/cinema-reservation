@@ -1,4 +1,4 @@
-package com.michal.demo.services
+package com.michal.cinema.util
 
 import java.time.Instant
 
