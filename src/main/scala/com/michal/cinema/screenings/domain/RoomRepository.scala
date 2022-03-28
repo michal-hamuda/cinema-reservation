@@ -9,6 +9,10 @@ import scala.concurrent.ExecutionContext
 
 class RoomRepository(implicit ec: ExecutionContext) {
 
+  def insert(room: Room): DBIO[Room] = {
+    (Rooms.query += room).map(_ => room)
+  }
+
   def findById(roomId: RoomId): DBIO[Option[Room]] = {
     Rooms.query.filter(_.id === roomId).result.headOption
   }

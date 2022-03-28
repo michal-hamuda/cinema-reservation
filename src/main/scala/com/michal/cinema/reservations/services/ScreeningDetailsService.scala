@@ -7,6 +7,7 @@ import com.michal.cinema.reservations.domain.ReservationsDomain.ReservationItem
 import com.michal.cinema.reservations.services.ScreeningDetailsService.{ScreeningDetails, SeatInfo, SeatStatus}
 import com.michal.cinema.screenings.domain.ScreeningsDomain.{Room, Screening, ScreeningId}
 import com.michal.cinema.screenings.domain.{RoomRepository, ScreeningRepository}
+import com.michal.cinema.util.ErrorMessage
 import com.rms.miu.slickcats.DBIOInstances._
 import slick.jdbc.H2Profile.api._
 
@@ -34,8 +35,8 @@ class ScreeningDetailsService(
                                roomRepository: RoomRepository,
                                reservationItemRepository: ReservationItemRepository
                              )(implicit ec: ExecutionContext) {
-  def get(screeningId: ScreeningId): Future[Option[ScreeningDetails]] = {
-    db.run(getDbio(screeningId))
+  def get(screeningId: ScreeningId): Future[Either[ErrorMessage, ScreeningDetails]] = {
+    db.run(getDbio(screeningId).map(_.toRight(ErrorMessage.NotFound)))
   }
 
   def getDbio(screeningId: ScreeningId): DBIO[Option[ScreeningDetails]] = {

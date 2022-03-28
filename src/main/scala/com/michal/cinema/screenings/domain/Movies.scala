@@ -6,11 +6,11 @@ import slick.jdbc.H2Profile.api._
 
 class Movies(tag: Tag) extends Table[Movie](tag, "movies") {
 
-  def id = column[MovieId]("id", O.AutoInc, O.PrimaryKey)
+  def id = column[MovieId]("id", O.PrimaryKey)
 
-  def title = column[String]("start_time")
+  def title = column[String]("title")
 
-  def durationMinutes = column[Int]("end_time")
+  def durationMinutes = column[Int]("duration_minutes")
 
   override def * = (id, title, durationMinutes) <> (Movie.tupled, Movie.unapply)
 }

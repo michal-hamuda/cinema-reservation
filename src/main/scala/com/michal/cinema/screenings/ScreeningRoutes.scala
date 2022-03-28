@@ -1,6 +1,7 @@
 package com.michal.cinema.screenings
 
-import java.time.Instant
+import java.time.{LocalDateTime, ZoneOffset}
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -20,7 +21,7 @@ class ScreeningRoutes(
     pathPrefix("screenings") {
       (pathPrefix("search") & pathEnd) {
         get {
-          parameters("from".as[Instant], "to".as[Instant]) { (from, to) =>
+          parameters("from".as[LocalDateTime](localDateU), "to".as[LocalDateTime](localDateU)) { (from, to) =>
             complete(
               searchScreeningsService.search(from, to)
             )

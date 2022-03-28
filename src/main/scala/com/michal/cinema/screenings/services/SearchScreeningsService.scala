@@ -1,10 +1,11 @@
 package com.michal.cinema.screenings.services
 
-import java.time.{Instant, LocalDateTime}
+import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 
 import com.michal.cinema.screenings.domain.ScreeningRepository
 import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
 import com.michal.cinema.screenings.services.SearchScreeningsService.ScreeningData
+import com.michal.cinema.util.DateTimeProvider
 import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.Future
@@ -17,15 +18,18 @@ object SearchScreeningsService {
                             start: LocalDateTime,
                             durationMinutes: Int
                           )
+
 }
 
 class SearchScreeningsService(
                                db: Database,
-                               screeningRepository: ScreeningRepository
+                               screeningRepository: ScreeningRepository,
+                               dateTimeProvider: DateTimeProvider
                              ) {
-  def search(from: Instant, to: Instant): Future[Seq[ScreeningData]] = {
+  import dateTimeProvider._
+  def search(from: LocalDateTime, to: LocalDateTime): Future[Seq[ScreeningData]] = {
     db.run(
-      screeningRepository.findScreenings(from, to)
+      screeningRepository.findScreenings(localToInstant(from), localToInstant(to))
     )
   }
 }

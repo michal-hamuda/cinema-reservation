@@ -1,6 +1,6 @@
 package com.michal.cinema.screenings.domain
 
-import java.time.Instant
+import java.sql.Timestamp
 
 import com.michal.cinema.screenings.domain.ScreeningsDomain.{MovieId, RoomId, Screening, ScreeningId}
 import com.michal.cinema.util.CustomMappers._
@@ -8,15 +8,18 @@ import slick.jdbc.H2Profile.api._
 
 class Screenings(tag: Tag) extends Table[Screening](tag, "screenings") {
 
-  def id = column[ScreeningId]("id", O.AutoInc, O.PrimaryKey)
+  def id = column[ScreeningId]("id", O.PrimaryKey)
 
-  def movieId = column[MovieId]("start_time")
+  def movieId = column[MovieId]("movie_id")
 
-  def roomId = column[RoomId]("start_time")
+  def roomId = column[RoomId]("room_id")
 
-  def startingAt = column[Instant]("start")
+  def startingAt = column[Timestamp]("start")
 
-  override def * = (id, movieId, roomId, startingAt) <> (Screening.tupled, Screening.unapply)
+  def startingAtInstant = (startingAt) <> (timestampToInstant _, instantToTimestamp _)
+
+
+  override def * = (id, movieId, roomId, startingAtInstant) <> (Screening.tupled, Screening.unapply)
 }
 
 object Screenings {

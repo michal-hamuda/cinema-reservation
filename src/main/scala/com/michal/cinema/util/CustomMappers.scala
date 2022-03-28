@@ -1,5 +1,7 @@
 package com.michal.cinema.util
 
+import java.sql.Timestamp
+import java.time.Instant
 import java.util.UUID
 
 import com.michal.cinema.reservations.domain.ReservationsDomain.{PriceCategory, ReservationConfirmationId, ReservationId, ReservationStatus}
@@ -37,6 +39,11 @@ object CustomMappers {
     id => id.toString,
     ReservationStatus.withName
   )
+
+  def instantToTimestamp(instant: Instant) = Option(new Timestamp(instant.toEpochMilli))
+
+  def timestampToInstant(timestamp: Timestamp) = Instant.ofEpochMilli(timestamp.getTime)
+
 
   implicit val priceCategoryMapper: BaseColumnType[PriceCategory.Value] = MappedColumnType.base[PriceCategory.Value, String](
     id => id.toString,

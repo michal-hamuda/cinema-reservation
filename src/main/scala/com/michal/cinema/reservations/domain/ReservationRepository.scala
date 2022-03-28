@@ -12,7 +12,11 @@ import scala.concurrent.ExecutionContext
 class ReservationRepository(implicit ec: ExecutionContext) {
 
   def insert(reservation: Reservation): DBIO[Reservation] = {
-    (Reservations.query.returning(Reservations.query)) += reservation
+    (Reservations.query += reservation).map(_ => reservation)
+  }
+
+  def findAll(): DBIO[Seq[Reservation]] = {
+    Reservations.query.result
   }
 
   def findByConfirmationId(confirmationId: ReservationConfirmationId): DBIO[Option[Reservation]] = {
@@ -25,7 +29,7 @@ class ReservationRepository(implicit ec: ExecutionContext) {
 
   def updateStatusByCreationTime(initialStatus: ReservationStatus.Value, targetStatus: ReservationStatus.Value, createdBefore: Instant): DBIO[Int] = {
     Reservations.query
-      .filter { case reservation => reservation.status === initialStatus && reservation.createdAt < createdBefore }
+      .filter { case reservation => reservation.status === initialStatus && reservation.createdAt < instantToTimestamp(createdBefore) }
       .map(_.status)
       .update(targetStatus)
   }
@@ -33,7 +37,7 @@ class ReservationRepository(implicit ec: ExecutionContext) {
   def updateStatusByScreeningTime(initialStatus: ReservationStatus.Value, targetStatus: ReservationStatus.Value, screeningBeforeThan: Instant): DBIO[Int] = {
     Reservations.query
       .join(Screenings.query).on(_.screeningId === _.id)
-      .filter { case (reservation, screening) => reservation.status === initialStatus && screening.startingAt < screeningBeforeThan }
+      .filter { case (reservation, screening) => reservation.status === initialStatus && screening.startingAt < instantToTimestamp(screeningBeforeThan) }
       .map(_._1.status)
       .update(targetStatus)
 

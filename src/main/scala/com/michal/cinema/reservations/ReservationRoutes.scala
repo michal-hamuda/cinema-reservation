@@ -24,33 +24,42 @@ class ReservationRoutes(
 
   val routes: Route =
 
-    (pathPrefix("reservations") & pathEnd) {
-      post {
+    (pathPrefix("reservations") ) {
+      (pathEnd & post) {
         entity(as[CreateReservationRequest]) { request =>
           complete(
             createReservationService.create(request).map {
-              case Left(error) => StatusCodes.BadRequest -> error.asJson
-              case Right(result) => StatusCodes.OK -> result.asJson
+              case Left(error) =>
+                StatusCodes.BadRequest -> error.asJson
+              case Right(result) =>
+                StatusCodes.OK -> result.asJson
             }
           )
 
         }
       } ~
-        (pathPrefix("confirm") & (path(JavaUUID) & pathEnd)) { id =>
-          get {
-            complete(
-              confirmReservationService.confirm(ReservationConfirmationId(id)).map {
-                case Left(error) => StatusCodes.BadRequest -> error.asJson
-                case Right(_) => StatusCodes.NoContent -> "".asJson
-              }
-            )
+        pathPrefix("confirm") {
+          (path(JavaUUID) & pathEnd) { id =>
+            get {
+              complete(
+                confirmReservationService.confirm(ReservationConfirmationId(id)).map {
+                  case Left(error) => StatusCodes.BadRequest -> error.asJson
+                  case Right(_) => StatusCodes.NoContent -> "".asJson
+                }
+              )
+            }
           }
         }
     } ~
       pathPrefix("screenings") {
         (path(JavaUUID) & pathEnd) { id =>
           get {
-            complete(screeningDetailsService.get(ScreeningId(id)))
+            complete(
+              screeningDetailsService.get(ScreeningId(id)).map {
+                case Left(error) => StatusCodes.BadRequest -> error.asJson
+                case Right(result) => StatusCodes.OK -> result.asJson
+              }
+            )
           }
         }
       }

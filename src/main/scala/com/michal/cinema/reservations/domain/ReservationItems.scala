@@ -6,7 +6,7 @@ import slick.jdbc.H2Profile.api._
 
 class ReservationItems(tag: Tag) extends Table[ReservationItem](tag, "reservation_items") {
 
-  def id = column[ReservationId]("id", O.AutoInc, O.PrimaryKey)
+  def reservationId = column[ReservationId]("reservation_id")
 
   def row = column[Int]("row")
 
@@ -16,9 +16,9 @@ class ReservationItems(tag: Tag) extends Table[ReservationItem](tag, "reservatio
 
   def price = column[BigDecimal]("price")
 
-  // foreign key should be (id, row, col)
+  def pk = primaryKey("pk_reservation_items", (reservationId, row, col))
 
-  override def * = (id, row, col, priceCategory, price) <> (ReservationItem.tupled, ReservationItem.unapply)
+  override def * = (reservationId, row, col, priceCategory, price) <> (ReservationItem.tupled, ReservationItem.unapply)
 }
 
 object ReservationItems {

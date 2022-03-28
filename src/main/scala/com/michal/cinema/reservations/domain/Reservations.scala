@@ -1,6 +1,6 @@
 package com.michal.cinema.reservations.domain
 
-import java.time.Instant
+import java.sql.Timestamp
 
 import com.michal.cinema.reservations.domain.ReservationsDomain.{Reservation, ReservationConfirmationId, ReservationId, ReservationStatus}
 import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
@@ -9,7 +9,7 @@ import slick.jdbc.H2Profile.api._
 
 class Reservations(tag: Tag) extends Table[Reservation](tag, "reservations") {
 
-  def id = column[ReservationId]("id", O.AutoInc, O.PrimaryKey)
+  def id = column[ReservationId]("id", O.PrimaryKey)
 
   def userFirstName = column[String]("user_first_name")
 
@@ -22,9 +22,11 @@ class Reservations(tag: Tag) extends Table[Reservation](tag, "reservations") {
   //separate id for confirmation links - we don't want the 'real' database id to be too visible to the user
   def confirmationId = column[ReservationConfirmationId]("confirmation_id")
 
-  def createdAt = column[Instant]("created_at")
+  def createdAt = column[Timestamp]("created_at")
 
-  override def * = (id, userFirstName, userLastName, screeningId, status, confirmationId, createdAt) <> (Reservation.tupled, Reservation.unapply)
+  def createdAtInstant = (createdAt) <> (timestampToInstant _, instantToTimestamp _)
+
+  override def * = (id, userFirstName, userLastName, screeningId, status, confirmationId, createdAtInstant) <> (Reservation.tupled, Reservation.unapply)
 }
 
 object Reservations {

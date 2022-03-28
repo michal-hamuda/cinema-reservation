@@ -1,6 +1,6 @@
 package com.michal.cinema.reservations.services
 
-import java.time.Instant
+import java.time.{LocalDateTime}
 
 import cats.data.EitherT
 import cats.implicits._
@@ -30,9 +30,10 @@ object CreateReservationService {
 
   case class CreateReservationResponse(
                                         totalPrice: BigDecimal,
-                                        expirationTime: Instant,
+                                        expirationTime: LocalDateTime,
                                         confirmationLink: String
                                       )
+
 }
 
 class CreateReservationService(
@@ -102,8 +103,9 @@ class CreateReservationService(
   }
 
   private def createResponse(items: Seq[ReservationItem], reservation: Reservation) = {
+    import dateTimeProvider._
     val totalPrice = items.map(_.price).sum
-    val expirationTime = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToExpirationInterval)
+    val expirationTime = instantToLocal(currentInstant().plus(reservationConfig.reservationToExpirationInterval))
     val confirmationLink = s"${reservationConfig.reservationConfirmationBaseUrl}${reservation.confirmationId.id}"
     CreateReservationResponse(totalPrice, expirationTime, confirmationLink)
   }

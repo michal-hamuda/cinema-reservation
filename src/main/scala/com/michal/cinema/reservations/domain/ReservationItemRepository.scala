@@ -11,14 +11,14 @@ import scala.concurrent.ExecutionContext
 class ReservationItemRepository(implicit ec: ExecutionContext) {
 
   def insert(reservationItem: ReservationItem): DBIO[ReservationItem] = {
-    (ReservationItems.query.returning(ReservationItems.query)) += reservationItem
+    (ReservationItems.query += reservationItem).map(_ => reservationItem)
   }
 
 
   def findActiveByScreeningId(screeningId: ScreeningId): DBIO[Seq[ReservationItem]] = {
-    val activeStates = Seq(ReservationStatus.Confirmed, ReservationStatus.Confirmed, ReservationStatus.Paid)
+    val activeStates = Seq(ReservationStatus.Pending, ReservationStatus.Confirmed, ReservationStatus.Paid)
     Reservations.query
-      .joinLeft(ReservationItems.query).on(_.id === _.id)
+      .joinLeft(ReservationItems.query).on(_.id === _.reservationId)
       .filter { case (reservation, item) =>
         reservation.screeningId === screeningId && reservation.status.inSet(activeStates)
       }.map { case (reservation, item) => item }

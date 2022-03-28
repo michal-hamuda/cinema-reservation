@@ -13,7 +13,6 @@ class JobExecutor(job: RunnableJob)(implicit ec: ExecutionContext) extends Actor
   // can be extended with retries, logging etc. if necessary
   override def receive: Receive = {
     case _ =>
-      log.info("Running job")
       job.run
   }
 }

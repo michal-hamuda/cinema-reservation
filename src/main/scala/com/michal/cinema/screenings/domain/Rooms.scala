@@ -6,7 +6,7 @@ import slick.jdbc.H2Profile.api._
 
 class Rooms(tag: Tag) extends Table[Room](tag, "rooms") {
 
-  def id = column[RoomId]("id", O.AutoInc, O.PrimaryKey)
+  def id = column[RoomId]("id", O.PrimaryKey)
 
   def rows = column[Int]("rows")
 
