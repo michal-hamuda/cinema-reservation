@@ -1,21 +1,11 @@
-package com.michal.cinema.screenings.domain
+package com.michal.cinema.reservations.domain
 
 import java.time.Instant
 import java.util.UUID
 
-object Domain {
+import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
 
-  case class MovieId(id: UUID)
-
-  case class Movie(id: MovieId, title: String, durationMinutes: Int)
-
-  case class RoomId(id: UUID)
-
-  case class Room(id: RoomId, rows: Int, columns: Int)
-
-  case class ScreeningId(id: UUID)
-
-  case class Screening(id: ScreeningId, movieId: MovieId, roomId: RoomId, start: Instant)
+object ReservationsDomain {
 
   object ReservationId {
     def generate() = ReservationId(UUID.randomUUID())
@@ -23,8 +13,14 @@ object Domain {
 
   case class ReservationId(id: UUID)
 
+  object ReservationConfirmationId {
+    def generate() = ReservationConfirmationId(UUID.randomUUID())
+  }
+
+  case class ReservationConfirmationId(id: UUID)
+
   object ReservationStatus extends Enumeration {
-    val Created, Paid, Expired = Value
+    val Pending, Confirmed, Paid, Expired = Value
   }
 
   case class Reservation(
@@ -32,7 +28,9 @@ object Domain {
                           userFirstName: String,
                           userLastName: String,
                           screeningId: ScreeningId,
-                          reservationStatus: ReservationStatus.Value
+                          status: ReservationStatus.Value,
+                          confirmationId: ReservationConfirmationId,
+                          createdAt: Instant
                         )
 
   object PriceCategory extends Enumeration {

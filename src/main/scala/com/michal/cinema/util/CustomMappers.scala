@@ -2,7 +2,8 @@ package com.michal.cinema.util
 
 import java.util.UUID
 
-import com.michal.cinema.screenings.domain.Domain._
+import com.michal.cinema.reservations.domain.ReservationsDomain.{PriceCategory, ReservationConfirmationId, ReservationId, ReservationStatus}
+import com.michal.cinema.screenings.domain.ScreeningsDomain._
 import slick.jdbc.H2Profile.api._
 
 object CustomMappers {
@@ -25,6 +26,11 @@ object CustomMappers {
   implicit val reservationIdMapper: BaseColumnType[ReservationId] = MappedColumnType.base[ReservationId, UUID](
     id => id.id,
     ReservationId.apply
+  )
+
+  implicit val reservationConfirmationIdMapper: BaseColumnType[ReservationConfirmationId] = MappedColumnType.base[ReservationConfirmationId, UUID](
+    id => id.id,
+    ReservationConfirmationId.apply
   )
 
   implicit val reservationStatusMapper: BaseColumnType[ReservationStatus.Value] = MappedColumnType.base[ReservationStatus.Value, String](

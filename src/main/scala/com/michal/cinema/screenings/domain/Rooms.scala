@@ -1,7 +1,7 @@
 package com.michal.cinema.screenings.domain
 
+import com.michal.cinema.screenings.domain.ScreeningsDomain.{Room, RoomId}
 import com.michal.cinema.util.CustomMappers._
-import com.michal.cinema.screenings.domain.Domain.{Room, RoomId}
 import slick.jdbc.H2Profile.api._
 
 class Rooms(tag: Tag) extends Table[Room](tag, "rooms") {

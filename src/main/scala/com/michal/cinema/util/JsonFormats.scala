@@ -1,7 +1,7 @@
 package com.michal.cinema.util
 
-import com.michal.cinema.screenings.domain.Domain.PriceCategory
-import com.michal.cinema.screenings.services.SeatStatus
+import com.michal.cinema.reservations.domain.ReservationsDomain.PriceCategory
+import com.michal.cinema.reservations.services.ScreeningDetailsService.SeatStatus
 import io.circe.{Decoder, Encoder}
 
 trait JsonFormats {

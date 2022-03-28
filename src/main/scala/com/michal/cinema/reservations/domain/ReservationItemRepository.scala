@@ -1,7 +1,8 @@
 package com.michal.cinema.reservations.domain
 
+import com.michal.cinema.reservations.domain.ReservationsDomain.{ReservationItem, ReservationStatus}
+import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
 import com.michal.cinema.util.CustomMappers._
-import com.michal.cinema.screenings.domain.Domain.{ReservationItem, ReservationStatus, ScreeningId}
 import slick.dbio.DBIO
 import slick.jdbc.H2Profile.api._
 
@@ -14,11 +15,12 @@ class ReservationItemRepository(implicit ec: ExecutionContext) {
   }
 
 
-  def findByScreeningId(screeningId: ScreeningId): DBIO[Seq[ReservationItem]] = {
+  def findActiveByScreeningId(screeningId: ScreeningId): DBIO[Seq[ReservationItem]] = {
+    val activeStates = Seq(ReservationStatus.Confirmed, ReservationStatus.Confirmed, ReservationStatus.Paid)
     Reservations.query
       .joinLeft(ReservationItems.query).on(_.id === _.id)
       .filter { case (reservation, item) =>
-        reservation.screeningId === screeningId && reservation.reservationStatus.inSet(Seq(ReservationStatus.Created, ReservationStatus.Paid))
+        reservation.screeningId === screeningId && reservation.status.inSet(activeStates)
       }.map { case (reservation, item) => item }
       .result.map(_.flatten)
   }

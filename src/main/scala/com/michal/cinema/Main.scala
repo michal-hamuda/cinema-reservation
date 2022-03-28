@@ -13,6 +13,7 @@ object Main extends Application {
       case Success(binding) =>
         val address = binding.localAddress
         system.log.info("Server online at http://{}:{}/", address.getHostString, address.getPort)
+        startAllJobs()
       case Failure(ex) =>
         system.log.error("Failed to bind HTTP endpoint, terminating system", ex)
         system.terminate()

@@ -2,8 +2,8 @@ package com.michal.cinema.screenings.domain
 
 import java.time.Instant
 
+import com.michal.cinema.screenings.domain.ScreeningsDomain.{MovieId, RoomId, Screening, ScreeningId}
 import com.michal.cinema.util.CustomMappers._
-import com.michal.cinema.screenings.domain.Domain.{MovieId, RoomId, Screening, ScreeningId}
 import slick.jdbc.H2Profile.api._
 
 class Screenings(tag: Tag) extends Table[Screening](tag, "screenings") {
@@ -14,9 +14,9 @@ class Screenings(tag: Tag) extends Table[Screening](tag, "screenings") {
 
   def roomId = column[RoomId]("start_time")
 
-  def start = column[Instant]("start")
+  def startingAt = column[Instant]("start")
 
-  override def * = (id, movieId, roomId, start) <> (Screening.tupled, Screening.unapply)
+  override def * = (id, movieId, roomId, startingAt) <> (Screening.tupled, Screening.unapply)
 }
 
 object Screenings {

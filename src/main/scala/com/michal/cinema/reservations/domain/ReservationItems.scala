@@ -1,7 +1,7 @@
 package com.michal.cinema.reservations.domain
 
+import com.michal.cinema.reservations.domain.ReservationsDomain.{PriceCategory, ReservationId, ReservationItem}
 import com.michal.cinema.util.CustomMappers._
-import com.michal.cinema.screenings.domain.Domain.{PriceCategory, ReservationId, ReservationItem}
 import slick.jdbc.H2Profile.api._
 
 class ReservationItems(tag: Tag) extends Table[ReservationItem](tag, "reservation_items") {
@@ -15,6 +15,8 @@ class ReservationItems(tag: Tag) extends Table[ReservationItem](tag, "reservatio
   def priceCategory = column[PriceCategory.Value]("price_category")
 
   def price = column[BigDecimal]("price")
+
+  // foreign key should be (id, row, col)
 
   override def * = (id, row, col, priceCategory, price) <> (ReservationItem.tupled, ReservationItem.unapply)
 }

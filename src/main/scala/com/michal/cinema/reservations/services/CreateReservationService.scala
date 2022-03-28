@@ -5,12 +5,13 @@ import java.time.Instant
 import cats.data.EitherT
 import cats.implicits._
 import com.michal.cinema.reservations.ReservationConfig
+import com.michal.cinema.reservations.domain.ReservationsDomain._
 import com.michal.cinema.reservations.domain.{ReservationItemRepository, ReservationRepository}
-import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, CreateReservationResponse, ErrorMessage}
-import com.michal.cinema.screenings.domain.Domain._
+import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, CreateReservationResponse}
+import com.michal.cinema.reservations.services.ScreeningDetailsService.ScreeningDetails
 import com.michal.cinema.screenings.domain.ScreeningRepository
-import com.michal.cinema.screenings.services.{ScreeningDetails, ScreeningDetailsService}
-import com.michal.cinema.util.DateTimeProvider
+import com.michal.cinema.screenings.domain.ScreeningsDomain._
+import com.michal.cinema.util.{DateTimeProvider, ErrorMessage}
 import com.rms.miu.slickcats.DBIOInstances._
 import slick.jdbc.H2Profile.api._
 
@@ -29,17 +30,9 @@ object CreateReservationService {
 
   case class CreateReservationResponse(
                                         totalPrice: BigDecimal,
-                                        expirationTime: Instant
+                                        expirationTime: Instant,
+                                        confirmationLink: String
                                       )
-
-  object ErrorMessage {
-    val NotFound = ErrorMessage("The requested resource was not found")
-    val ReservationUnavailable = ErrorMessage("Reservation cannot be made for this screening")
-    val RequestInvalid = ErrorMessage("The reservation request is not valid")
-  }
-
-  case class ErrorMessage(message: String)
-
 }
 
 class CreateReservationService(
@@ -49,7 +42,7 @@ class CreateReservationService(
                                 reservationItemRepository: ReservationItemRepository,
                                 screeningDetailsService: ScreeningDetailsService,
                                 validateReservationCreationService: ValidateReservationCreationService,
-                                priceConfig: ReservationConfig,
+                                reservationConfig: ReservationConfig,
                                 dateTimeProvider: DateTimeProvider
                               )(implicit ec: ExecutionContext) {
   def create(request: CreateReservationRequest): Future[Either[ErrorMessage, CreateReservationResponse]] = {
@@ -60,24 +53,17 @@ class CreateReservationService(
       reservation <- insertReservation(request)
       items = createReservationItems(request, reservation.id)
       _ <- insertReservationItems(items)
-      response = createResponse(items)
+      response = createResponse(items, reservation)
     } yield response).value.transactionally)
-
   }
 
   private def findScreening(request: CreateReservationRequest): EitherT[DBIO, ErrorMessage, Screening] = {
-    val dbio: DBIO[Either[ErrorMessage, Screening]] = screeningRepository
-      .findById(request.screeningId)
-      .map(_.toRight(ErrorMessage.NotFound))
-    EitherT(dbio)
+    EitherT.fromOptionF(screeningRepository.findById(request.screeningId), ErrorMessage.NotFound)
   }
 
   private def findScreeningDetails(screeningId: ScreeningId): EitherT[DBIO, ErrorMessage, ScreeningDetails] = {
-    val dbio: DBIO[Either[ErrorMessage, ScreeningDetails]] = screeningDetailsService.getDbio(screeningId)
-      .map(_.toRight(ErrorMessage.NotFound))
-    EitherT(dbio)
+    EitherT.fromOptionF(screeningDetailsService.getDbio(screeningId), ErrorMessage.NotFound)
   }
-
 
   private def insertReservation(request: CreateReservationRequest): EitherT[DBIO, ErrorMessage, Reservation] = {
     val reservation = Reservation(
@@ -85,7 +71,9 @@ class CreateReservationService(
       request.userFirstName,
       request.userLastName,
       request.screeningId,
-      ReservationStatus.Created
+      ReservationStatus.Pending,
+      ReservationConfirmationId.generate(),
+      dateTimeProvider.currentInstant()
     )
     EitherT.right[ErrorMessage](reservationRepository.insert(reservation))
   }
@@ -96,26 +84,27 @@ class CreateReservationService(
     )
   }
 
+  private def getPrice(priceCategory: PriceCategory.Value) = {
+    priceCategory match {
+      case PriceCategory.Adult =>
+        reservationConfig.adultPrice
+      case PriceCategory.Student =>
+        reservationConfig.studentPrice
+      case PriceCategory.Child =>
+        reservationConfig.childPrice
+    }
+  }
+
   private def insertReservationItems(items: Seq[ReservationItem]): EitherT[DBIO, ErrorMessage, Seq[ReservationItem]] = {
     EitherT.right[ErrorMessage](
       items.traverse(reservationItemRepository.insert)
     )
   }
 
-  private def getPrice(priceCategory: PriceCategory.Value) = {
-    priceCategory match {
-      case PriceCategory.Adult =>
-        priceConfig.adultPrice
-      case PriceCategory.Student =>
-        priceConfig.studentPrice
-      case PriceCategory.Child =>
-        priceConfig.childPrice
-    }
-  }
-
-  private def createResponse(items: Seq[ReservationItem]) = {
+  private def createResponse(items: Seq[ReservationItem], reservation: Reservation) = {
     val totalPrice = items.map(_.price).sum
-    val expirationTime = dateTimeProvider.currentInstant().plus(priceConfig.expirationThreshold)
-    CreateReservationResponse(totalPrice, expirationTime)
+    val expirationTime = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToExpirationInterval)
+    val confirmationLink = s"${reservationConfig.reservationConfirmationBaseUrl}${reservation.confirmationId.id}"
+    CreateReservationResponse(totalPrice, expirationTime, confirmationLink)
   }
 }

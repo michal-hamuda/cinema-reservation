@@ -1,55 +1,32 @@
 package com.michal.cinema.screenings
 
 import java.time.Instant
-
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.util.Timeout
-import com.michal.cinema.reservations.services.CreateReservationService
-import com.michal.cinema.reservations.services.CreateReservationService.CreateReservationRequest
-import com.michal.cinema.screenings.domain.Domain.ScreeningId
-import com.michal.cinema.screenings.services.{ScreeningDetailsService, SearchScreeningsService}
+import com.michal.cinema.screenings.services.SearchScreeningsService
 import com.michal.cinema.util.JsonFormats
 
 import scala.concurrent.ExecutionContext
 
 class ScreeningRoutes(
-                       screeningDetailsService: ScreeningDetailsService,
                        searchScreeningsService: SearchScreeningsService
                      )(implicit val system: ActorSystem, ec: ExecutionContext) extends JsonFormats {
 
   import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
   import io.circe.generic.auto._
-  import io.circe.syntax._
-
-  // If ask takes more time than this to complete the request is failed
-  //  val aaa = system.settings.config
-  //  val aaaeee = system.settings.config.getDuration("my-app.routes.ask-timeout")
-//    private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
-//  private implicit val timeout = Timeout(5, TimeUnit.SECONDS)
-
 
   val routes: Route =
     pathPrefix("screenings") {
       (pathPrefix("search") & pathEnd) {
         get {
-          parameters("from".as[String], "to".as[String]) { (from, to) =>
-            val fromm = Instant.now()
-            val too = Instant.now().plusSeconds(60)
+          parameters("from".as[Instant], "to".as[Instant]) { (from, to) =>
             complete(
-              searchScreeningsService.search(fromm, too)
+              searchScreeningsService.search(from, to)
             )
           }
         }
-      } ~
-        (path(JavaUUID) & pathEnd) { id =>
-          get {
-            val idd = ScreeningId(id)
-            complete(screeningDetailsService.get(idd).map(yy => StatusCodes.OK -> yy))
-          }
-        }
+      }
     }
 
 }

@@ -1,13 +1,13 @@
 package com.michal.cinema.reservations.services
 
 import com.michal.cinema.reservations.ReservationConfig
-import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, ErrorMessage, NewSeatReservation}
-import com.michal.cinema.screenings.domain.Domain.Screening
-import com.michal.cinema.screenings.services.{ScreeningDetails, SeatStatus}
-import com.michal.cinema.util.DateTimeProvider
+import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, NewSeatReservation}
+import com.michal.cinema.reservations.services.ScreeningDetailsService.{ScreeningDetails, SeatStatus}
+import com.michal.cinema.screenings.domain.ScreeningsDomain.Screening
+import com.michal.cinema.util.{DateTimeProvider, ErrorMessage}
 
 class ValidateReservationCreationService(
-                                          priceConfig: ReservationConfig,
+                                          reservationConfig: ReservationConfig,
                                           dateTimeProvider: DateTimeProvider
                                         ) {
 
@@ -20,7 +20,7 @@ class ValidateReservationCreationService(
   }
 
   private def validateReservationNotTooLate(request: CreateReservationRequest, screening: Screening): Either[ErrorMessage, Unit] = {
-    val isTooLate = dateTimeProvider.currentInstant().plus(priceConfig.reservationThreshold).isAfter(screening.start)
+    val isTooLate = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToScreeningMinInterval).isAfter(screening.start)
     Either.cond(isTooLate, (), ErrorMessage.ReservationUnavailable)
   }
 
@@ -34,6 +34,8 @@ class ValidateReservationCreationService(
   }
 
   private def isValidFirstName(name: String) = {
+    // chosen to use direct methods on string like .isLetter
+    // instead of regexes because of requirement to handle Unicode (polish) characters
     name.length >= 3 &&
       name.forall(_.isLetter) &&
       name.head.isUpper
@@ -49,7 +51,7 @@ class ValidateReservationCreationService(
 
   private def validateSeats(request: CreateReservationRequest, screeningDetails: ScreeningDetails): Either[ErrorMessage, Unit] = {
     val isValid = request.seats.nonEmpty &&
-      request.seats.forall(validateSeatAvailability(_, screeningDetails)) &&
+      request.seats.forall(validateSeatIsAvailable(_, screeningDetails)) &&
       validateNoLoneSeatLeft(request, screeningDetails)
 
     Either.cond(isValid, (), ErrorMessage.RequestInvalid)
@@ -74,7 +76,7 @@ class ValidateReservationCreationService(
     seatReservedPreviously || seatReservedNow
   }
 
-  private def validateSeatAvailability(newReservedSeat: NewSeatReservation, screeningDetails: ScreeningDetails) = {
+  private def validateSeatIsAvailable(newReservedSeat: NewSeatReservation, screeningDetails: ScreeningDetails) = {
     screeningDetails.seats.exists(seat => seat.row == newReservedSeat.row && seat.column == seat.column && seat.status == SeatStatus.Free)
   }
 }
