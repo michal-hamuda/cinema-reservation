@@ -1,6 +1,6 @@
 package com.michal.cinema.screenings.services
 
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.time.LocalDateTime
 
 import com.michal.cinema.screenings.domain.ScreeningRepository
 import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
@@ -26,7 +26,9 @@ class SearchScreeningsService(
                                screeningRepository: ScreeningRepository,
                                dateTimeProvider: DateTimeProvider
                              ) {
+
   import dateTimeProvider._
+
   def search(from: LocalDateTime, to: LocalDateTime): Future[Seq[ScreeningData]] = {
     db.run(
       screeningRepository.findScreenings(localToInstant(from), localToInstant(to))

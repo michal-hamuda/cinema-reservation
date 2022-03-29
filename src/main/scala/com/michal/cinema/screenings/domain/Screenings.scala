@@ -14,7 +14,7 @@ class Screenings(tag: Tag) extends Table[Screening](tag, "screenings") {
 
   def roomId = column[RoomId]("room_id")
 
-  def startingAt = column[Timestamp]("start")
+  def startingAt = column[Timestamp]("starting_at")
 
   def startingAtInstant = (startingAt) <> (timestampToInstant _, instantToTimestamp _)
 

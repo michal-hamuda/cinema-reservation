@@ -1,6 +1,6 @@
 package com.michal.cinema.screenings.domain
 
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.Instant
 
 import com.michal.cinema.screenings.domain.ScreeningsDomain.{Screening, ScreeningId}
 import com.michal.cinema.screenings.services.SearchScreeningsService.ScreeningData
@@ -30,7 +30,7 @@ class ScreeningRepository(dateTimeProvider: DateTimeProvider)(implicit ec: Execu
       case (screening, movie) => ScreeningData(
         screening.id,
         movie.map(_.title).getOrElse(""),
-        dateTimeProvider.instantToLocal(screening.start),
+        dateTimeProvider.instantToLocal(screening.startingAt),
         movie.map(_.durationMinutes).getOrElse(0)
       )
     }

@@ -16,7 +16,7 @@ import scala.util.Try
 trait JsonFormats {
 
   implicit val ScreeningIdEncoder: Encoder[ScreeningId] = Encoder.encodeString.contramap[ScreeningId](_.id.toString)
-  implicit val ScreeningIdDecoder: Decoder[ScreeningId] = Decoder.decodeString.emapTry { str =>Try(ScreeningId(UUID.fromString(str) ))}
+  implicit val ScreeningIdDecoder: Decoder[ScreeningId] = Decoder.decodeString.emapTry { str => Try(ScreeningId(UUID.fromString(str))) }
 
   implicit val seatStatusDecoder: Decoder[SeatStatus.Value] = Decoder.decodeEnumeration(SeatStatus)
   implicit val seatStatusEncoder: Encoder[SeatStatus.Value] = Encoder.encodeEnumeration(SeatStatus)

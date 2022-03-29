@@ -8,7 +8,7 @@ import slick.jdbc.H2Profile.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CancelReservationService(
+class CancelExpiredReservationsService(
                                 db: Database,
                                 reservationRepository: ReservationRepository,
                                 dateTimeProvider: DateTimeProvider,

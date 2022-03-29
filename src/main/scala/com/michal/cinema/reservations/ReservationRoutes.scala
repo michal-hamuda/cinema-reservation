@@ -9,6 +9,7 @@ import com.michal.cinema.reservations.services.CreateReservationService.CreateRe
 import com.michal.cinema.reservations.services.{ConfirmReservationService, CreateReservationService, ScreeningDetailsService}
 import com.michal.cinema.screenings.domain.ScreeningsDomain.ScreeningId
 import com.michal.cinema.util.JsonFormats
+import io.circe.{Json, JsonObject}
 
 import scala.concurrent.ExecutionContext
 
@@ -23,8 +24,7 @@ class ReservationRoutes(
   import io.circe.syntax._
 
   val routes: Route =
-
-    (pathPrefix("reservations") ) {
+    (pathPrefix("reservations")) {
       (pathEnd & post) {
         entity(as[CreateReservationRequest]) { request =>
           complete(
@@ -44,7 +44,7 @@ class ReservationRoutes(
               complete(
                 confirmReservationService.confirm(ReservationConfirmationId(id)).map {
                   case Left(error) => StatusCodes.BadRequest -> error.asJson
-                  case Right(_) => StatusCodes.NoContent -> "".asJson
+                  case Right(_) => StatusCodes.OK -> Json.fromJsonObject(JsonObject.empty)
                 }
               )
             }

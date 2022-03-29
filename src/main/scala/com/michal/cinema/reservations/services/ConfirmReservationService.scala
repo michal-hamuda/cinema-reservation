@@ -35,7 +35,7 @@ class ConfirmReservationService(
     val now = dateTimeProvider.currentInstant()
     val isPending = reservation.status == ReservationStatus.Pending
     val notExpired = reservation.createdAt.plus(reservationConfig.reservationToExpirationInterval).isAfter(now)
-    val screeningNotClosed = now.plus(reservationConfig.reservationToScreeningMinInterval).isBefore(screening.start)
+    val screeningNotClosed = now.plus(reservationConfig.reservationToScreeningMinInterval).isBefore(screening.startingAt)
     EitherT.cond[DBIO](isPending && notExpired && screeningNotClosed, (), ErrorMessage.RequestInvalid)
   }
 

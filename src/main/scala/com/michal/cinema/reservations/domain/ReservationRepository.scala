@@ -27,14 +27,22 @@ class ReservationRepository(implicit ec: ExecutionContext) {
     Reservations.query.filter(_.id === reservation.id).update(reservation)
   }
 
-  def updateStatusByCreationTime(initialStatus: ReservationStatus.Value, targetStatus: ReservationStatus.Value, createdBefore: Instant): DBIO[Int] = {
+  def updateStatusByCreationTime(
+                                  initialStatus: ReservationStatus.Value,
+                                  targetStatus: ReservationStatus.Value,
+                                  createdBefore: Instant
+                                ): DBIO[Int] = {
     Reservations.query
-      .filter { case reservation => reservation.status === initialStatus && reservation.createdAt < instantToTimestamp(createdBefore) }
+      .filter { reservation => reservation.status === initialStatus && reservation.createdAt < instantToTimestamp(createdBefore) }
       .map(_.status)
       .update(targetStatus)
   }
 
-  def updateStatusByScreeningTime(initialStatus: ReservationStatus.Value, targetStatus: ReservationStatus.Value, screeningBeforeThan: Instant): DBIO[Int] = {
+  def updateStatusByScreeningTime(
+                                   initialStatus: ReservationStatus.Value,
+                                   targetStatus: ReservationStatus.Value,
+                                   screeningBeforeThan: Instant
+                                 ): DBIO[Int] = {
     Reservations.query
       .join(Screenings.query).on(_.screeningId === _.id)
       .filter { case (reservation, screening) => reservation.status === initialStatus && screening.startingAt < instantToTimestamp(screeningBeforeThan) }

@@ -1,6 +1,6 @@
 package com.michal.cinema.reservations.services
 
-import java.time.{LocalDateTime}
+import java.time.LocalDateTime
 
 import cats.data.EitherT
 import cats.implicits._

@@ -21,8 +21,7 @@ trait Application extends ScreeningsModule with ReservationsModule {
     startCancelReservationJob()
   }
 
-  val routes = logRequestResult("Cinema-reservation") {
-    screeningRoutes.routes ~ reservationRoutes.routes
-  }
+  val routes = screeningRoutes.routes ~ reservationRoutes.routes
+
 
 }

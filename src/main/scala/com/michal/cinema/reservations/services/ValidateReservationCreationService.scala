@@ -20,7 +20,7 @@ class ValidateReservationCreationService(
   }
 
   private def validateReservationNotTooLate(request: CreateReservationRequest, screening: Screening): Either[ErrorMessage, Unit] = {
-    val isTooLate = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToScreeningMinInterval).isBefore(screening.start)
+    val isTooLate = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToScreeningMinInterval).isBefore(screening.startingAt)
     Either.cond(isTooLate, (), ErrorMessage.ReservationUnavailable)
   }
 

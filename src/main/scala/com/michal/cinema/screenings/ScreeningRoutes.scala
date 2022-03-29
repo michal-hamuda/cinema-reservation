@@ -1,6 +1,6 @@
 package com.michal.cinema.screenings
 
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.LocalDateTime
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.server.Directives._

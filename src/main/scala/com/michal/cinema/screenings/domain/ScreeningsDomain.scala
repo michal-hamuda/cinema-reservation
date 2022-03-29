@@ -15,6 +15,6 @@ object ScreeningsDomain {
 
   case class ScreeningId(id: UUID)
 
-  case class Screening(id: ScreeningId, movieId: MovieId, roomId: RoomId, start: Instant)
+  case class Screening(id: ScreeningId, movieId: MovieId, roomId: RoomId, startingAt: Instant)
 
 }

@@ -44,13 +44,15 @@ trait ReservationsModule {
   lazy val validateReservationCreationService = wire[ValidateReservationCreationService]
   lazy val confirmReservationService = wire[ConfirmReservationService]
   lazy val createReservationService = wire[CreateReservationService]
-  lazy val cancelReservationService = wire[CancelReservationService]
+  lazy val cancelReservationService = wire[CancelExpiredReservationsService]
 
   lazy val cancelReservationJobConfig = SchedulerActorConfig(
     initialDelay = config.getDuration("cinema-reservations.schedulers.cancelReservation.initialDelay").toScala,
     interval = config.getDuration("cinema-reservations.schedulers.cancelReservation.interval").toScala,
   )
   lazy val cancelReservationJobExecutor: ActorRef = wireActor[CancelReservationJobExecutor]("cancelReservationJobExecutor")
+
+  lazy val reservationRoutes = wire[ReservationRoutes]
 
   def startCancelReservationJob() = {
     system.scheduler.scheduleWithFixedDelay(
@@ -60,8 +62,5 @@ trait ReservationsModule {
       "tick"
     )
   }
-
-
-  lazy val reservationRoutes = wire[ReservationRoutes]
 
 }
