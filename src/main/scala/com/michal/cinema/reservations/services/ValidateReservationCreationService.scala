@@ -67,16 +67,16 @@ class ValidateReservationCreationService(
     }
   }
 
-  private def validateSeatIsTaken(seat: NewSeatReservation, request: CreateReservationRequest, screeningDetails: ScreeningDetails) = {
-    val seatReservedPreviously = screeningDetails.seats.exists(seat => seat.row == seat.row &&
-      seat.column == seat.column &&
+  private def validateSeatIsTaken(newSeat: NewSeatReservation, request: CreateReservationRequest, screeningDetails: ScreeningDetails) = {
+    val seatReservedPreviously = screeningDetails.seats.exists(seat => seat.row == newSeat.row &&
+      seat.column == newSeat.column &&
       seat.status == SeatStatus.Taken)
-    val seatReservedNow = request.seats.exists(seat => seat.row == seat.row &&
-      seat.column == seat.column)
+    val seatReservedNow = request.seats.exists(seat => newSeat.row == seat.row &&
+      seat.column == newSeat.column)
     seatReservedPreviously || seatReservedNow
   }
 
   private def validateSeatIsAvailable(newReservedSeat: NewSeatReservation, screeningDetails: ScreeningDetails) = {
-    screeningDetails.seats.exists(seat => seat.row == newReservedSeat.row && seat.column == seat.column && seat.status == SeatStatus.Free)
+    screeningDetails.seats.exists(seat => seat.row == newReservedSeat.row && seat.column == newReservedSeat.column && seat.status == SeatStatus.Free)
   }
 }
