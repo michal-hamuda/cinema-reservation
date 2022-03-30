@@ -4,7 +4,7 @@ A microservice handling cinema ticket reservations.
 
 Technologies: Scala, Slick, Akka Http, Macwire, database H2 (in memory) for demonstration purposes
 
-Setup: just run ``sbt run``, no additional setup needed
+Setup: just run ``sbt run``, or `run-app.sh`, after that you can run `.test-script.sh` to run the 
 
 Assumptions:
 - for the simplicity of presentation, no authorisation/authentication
@@ -12,3 +12,5 @@ Assumptions:
 - excluded payment handling, since it was not specified in the requirements
 - every room is a rectangle (by that I mean, seats are aligned in rows and every row has the same amount of seats)
 - user specifies reservations in the following format: I want the following seats for screening X: seat in row 1 column 3 for adult, seat in row 1 column 4 for a child, etc.
+- additional task implemented - Reservation confirmation
+- test coverage is limited due to the limit of time
