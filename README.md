@@ -4,7 +4,7 @@ A microservice handling cinema ticket reservations.
 
 Technologies: Scala, Slick, Akka Http, Macwire, database H2 (in memory) for demonstration purposes
 
-Setup: just run ``sbt run``, or `run-app.sh`, after that you can run `.test-script.sh` to run the 
+Setup: just run ``sbt run``, or `run-app.sh`, after that you can run `.test-script.sh` to show the example requests 
 
 Assumptions:
 - for the simplicity of presentation, no authorisation/authentication
