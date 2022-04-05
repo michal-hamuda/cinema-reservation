@@ -5,11 +5,15 @@ import java.time.{Instant, LocalDateTime, ZoneId}
 trait DateTimeProvider {
   def currentInstant(): Instant
 
-  def instantToLocal(instant: Instant) = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Warsaw"))
+  def defaultZoneId: ZoneId
 
-  def localToInstant(localDateTime: LocalDateTime) = localDateTime.atZone(ZoneId.of("Europe/Warsaw")).toInstant
+  def instantToLocal(instant: Instant) = LocalDateTime.ofInstant(instant, defaultZoneId)
+
+  def localToInstant(localDateTime: LocalDateTime) = localDateTime.atZone(defaultZoneId).toInstant
 }
 
 class DateTimeProviderImpl extends DateTimeProvider {
   override def currentInstant(): Instant = Instant.now()
+
+  override val defaultZoneId: ZoneId = ZoneId.of("Europe/Warsaw")
 }

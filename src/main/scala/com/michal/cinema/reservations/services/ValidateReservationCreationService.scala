@@ -4,14 +4,14 @@ import com.michal.cinema.reservations.ReservationConfig
 import com.michal.cinema.reservations.services.CreateReservationService.{CreateReservationRequest, NewSeatReservation}
 import com.michal.cinema.reservations.services.ScreeningDetailsService.{ScreeningDetails, SeatStatus}
 import com.michal.cinema.screenings.domain.ScreeningsDomain.Screening
-import com.michal.cinema.util.{DateTimeProvider, ErrorMessage}
+import com.michal.cinema.util.{DateTimeProvider, CinemaError}
 
 class ValidateReservationCreationService(
                                           reservationConfig: ReservationConfig,
                                           dateTimeProvider: DateTimeProvider
                                         ) {
 
-  def validate(request: CreateReservationRequest, screening: Screening, screeningDetails: ScreeningDetails): Either[ErrorMessage, Unit] = {
+  def validate(request: CreateReservationRequest, screening: Screening, screeningDetails: ScreeningDetails): Either[CinemaError, Unit] = {
     for {
       _ <- validateReservationNotTooLate(request, screening)
       _ <- validateName(request)
@@ -19,17 +19,17 @@ class ValidateReservationCreationService(
     } yield ()
   }
 
-  private def validateReservationNotTooLate(request: CreateReservationRequest, screening: Screening): Either[ErrorMessage, Unit] = {
+  private def validateReservationNotTooLate(request: CreateReservationRequest, screening: Screening): Either[CinemaError, Unit] = {
     val isTooLate = dateTimeProvider.currentInstant().plus(reservationConfig.reservationToScreeningMinInterval).isBefore(screening.startingAt)
-    Either.cond(isTooLate, (), ErrorMessage.ReservationUnavailable)
+    Either.cond(isTooLate, (), CinemaError.ReservationUnavailable)
   }
 
 
-  private def validateName(request: CreateReservationRequest): Either[ErrorMessage, Unit] = {
+  private def validateName(request: CreateReservationRequest): Either[CinemaError, Unit] = {
     Either.cond(
       isValidFirstName(request.userFirstName) && isValidLastName(request.userLastName),
       (),
-      ErrorMessage.RequestInvalid
+      CinemaError.RequestInvalid
     )
   }
 
@@ -49,12 +49,12 @@ class ValidateReservationCreationService(
     }
   }
 
-  private def validateSeats(request: CreateReservationRequest, screeningDetails: ScreeningDetails): Either[ErrorMessage, Unit] = {
+  private def validateSeats(request: CreateReservationRequest, screeningDetails: ScreeningDetails): Either[CinemaError, Unit] = {
     val isValid = request.seats.nonEmpty &&
       request.seats.forall(validateSeatIsAvailable(_, screeningDetails)) &&
       validateNoLoneSeatLeft(request, screeningDetails)
 
-    Either.cond(isValid, (), ErrorMessage.RequestInvalid)
+    Either.cond(isValid, (), CinemaError.RequestInvalid)
   }
 
   private def validateNoLoneSeatLeft(request: CreateReservationRequest, screeningDetails: ScreeningDetails) = {

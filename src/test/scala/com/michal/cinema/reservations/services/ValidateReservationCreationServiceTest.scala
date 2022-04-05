@@ -31,10 +31,10 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val roomId = RoomId.generate()
     val screening = Screening(screeningId, movieId, roomId, Instant.now().plus(2, ChronoUnit.HOURS))
     val screeningDetails = ScreeningDetails(screeningId, 2, 2, Seq(
-      SeatInfo(0,0, SeatStatus.Free),
-      SeatInfo(0,1, SeatStatus.Free),
-      SeatInfo(1,0, SeatStatus.Free),
-      SeatInfo(1,1, SeatStatus.Free),
+      SeatInfo(0, 0, SeatStatus.Free),
+      SeatInfo(0, 1, SeatStatus.Free),
+      SeatInfo(1, 0, SeatStatus.Free),
+      SeatInfo(1, 1, SeatStatus.Free),
     ))
 
     val request = CreateReservationRequest(
@@ -60,10 +60,10 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val roomId = RoomId.generate()
     val screening = Screening(screeningId, movieId, roomId, Instant.now().plus(2, ChronoUnit.HOURS))
     val screeningDetails = ScreeningDetails(screeningId, 2, 2, Seq(
-      SeatInfo(0,0, SeatStatus.Free),
-      SeatInfo(0,1, SeatStatus.Free),
-      SeatInfo(1,0, SeatStatus.Free),
-      SeatInfo(1,1, SeatStatus.Free),
+      SeatInfo(0, 0, SeatStatus.Free),
+      SeatInfo(0, 1, SeatStatus.Free),
+      SeatInfo(1, 0, SeatStatus.Free),
+      SeatInfo(1, 1, SeatStatus.Free),
     ))
 
     val request = CreateReservationRequest(
@@ -89,10 +89,10 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val roomId = RoomId.generate()
     val screening = Screening(screeningId, movieId, roomId, Instant.now().plus(5, ChronoUnit.MINUTES))
     val screeningDetails = ScreeningDetails(screeningId, 2, 2, Seq(
-      SeatInfo(0,0, SeatStatus.Free),
-      SeatInfo(0,1, SeatStatus.Free),
-      SeatInfo(1,0, SeatStatus.Free),
-      SeatInfo(1,1, SeatStatus.Free),
+      SeatInfo(0, 0, SeatStatus.Free),
+      SeatInfo(0, 1, SeatStatus.Free),
+      SeatInfo(1, 0, SeatStatus.Free),
+      SeatInfo(1, 1, SeatStatus.Free),
     ))
 
     val request = CreateReservationRequest(
@@ -118,10 +118,10 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val roomId = RoomId.generate()
     val screening = Screening(screeningId, movieId, roomId, Instant.now().plus(2, ChronoUnit.HOURS))
     val screeningDetails = ScreeningDetails(screeningId, 2, 2, Seq(
-      SeatInfo(0,0, SeatStatus.Free),
-      SeatInfo(0,1, SeatStatus.Free),
-      SeatInfo(1,0, SeatStatus.Free),
-      SeatInfo(1,1, SeatStatus.Taken),
+      SeatInfo(0, 0, SeatStatus.Free),
+      SeatInfo(0, 1, SeatStatus.Free),
+      SeatInfo(1, 0, SeatStatus.Free),
+      SeatInfo(1, 1, SeatStatus.Taken),
     ))
 
     val request = CreateReservationRequest(
@@ -147,15 +147,15 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val roomId = RoomId.generate()
     val screening = Screening(screeningId, movieId, roomId, Instant.now().plus(2, ChronoUnit.HOURS))
     val screeningDetails = ScreeningDetails(screeningId, 3, 3, Seq(
-      SeatInfo(0,0, SeatStatus.Free),
-      SeatInfo(0,1, SeatStatus.Free),
-      SeatInfo(0,2, SeatStatus.Taken),
-      SeatInfo(1,0, SeatStatus.Free),
-      SeatInfo(1,1, SeatStatus.Free),
-      SeatInfo(1,2, SeatStatus.Free),
-      SeatInfo(2,0, SeatStatus.Free),
-      SeatInfo(2,1, SeatStatus.Free),
-      SeatInfo(2,2, SeatStatus.Free)
+      SeatInfo(0, 0, SeatStatus.Free),
+      SeatInfo(0, 1, SeatStatus.Free),
+      SeatInfo(0, 2, SeatStatus.Taken),
+      SeatInfo(1, 0, SeatStatus.Free),
+      SeatInfo(1, 1, SeatStatus.Free),
+      SeatInfo(1, 2, SeatStatus.Free),
+      SeatInfo(2, 0, SeatStatus.Free),
+      SeatInfo(2, 1, SeatStatus.Free),
+      SeatInfo(2, 2, SeatStatus.Free)
     ))
 
     val request = CreateReservationRequest(
@@ -174,7 +174,6 @@ class ValidateReservationCreationServiceTest extends AnyFlatSpec with Matchers {
     val result = service.validate(request, screening, screeningDetails)
     result.isLeft shouldBe true
   }
-
 
 
 }

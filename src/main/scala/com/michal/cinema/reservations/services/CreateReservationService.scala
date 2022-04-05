@@ -11,7 +11,7 @@ import com.michal.cinema.reservations.services.CreateReservationService.{CreateR
 import com.michal.cinema.reservations.services.ScreeningDetailsService.ScreeningDetails
 import com.michal.cinema.screenings.domain.ScreeningRepository
 import com.michal.cinema.screenings.domain.ScreeningsDomain._
-import com.michal.cinema.util.{DateTimeProvider, ErrorMessage}
+import com.michal.cinema.util.{DateTimeProvider, CinemaError}
 import com.rms.miu.slickcats.DBIOInstances._
 import slick.jdbc.H2Profile.api._
 
@@ -46,7 +46,7 @@ class CreateReservationService(
                                 reservationConfig: ReservationConfig,
                                 dateTimeProvider: DateTimeProvider
                               )(implicit ec: ExecutionContext) {
-  def create(request: CreateReservationRequest): Future[Either[ErrorMessage, CreateReservationResponse]] = {
+  def create(request: CreateReservationRequest): Future[Either[CinemaError, CreateReservationResponse]] = {
     db.run((for {
       screening <- findScreening(request)
       screeningDetails <- findScreeningDetails(screening.id)
@@ -58,15 +58,15 @@ class CreateReservationService(
     } yield response).value.transactionally)
   }
 
-  private def findScreening(request: CreateReservationRequest): EitherT[DBIO, ErrorMessage, Screening] = {
-    EitherT.fromOptionF(screeningRepository.findById(request.screeningId), ErrorMessage.NotFound)
+  private def findScreening(request: CreateReservationRequest): EitherT[DBIO, CinemaError, Screening] = {
+    EitherT.fromOptionF(screeningRepository.findById(request.screeningId), CinemaError.NotFound)
   }
 
-  private def findScreeningDetails(screeningId: ScreeningId): EitherT[DBIO, ErrorMessage, ScreeningDetails] = {
-    EitherT.fromOptionF(screeningDetailsService.getDbio(screeningId), ErrorMessage.NotFound)
+  private def findScreeningDetails(screeningId: ScreeningId): EitherT[DBIO, CinemaError, ScreeningDetails] = {
+    EitherT.fromOptionF(screeningDetailsService.getDbio(screeningId), CinemaError.NotFound)
   }
 
-  private def insertReservation(request: CreateReservationRequest): EitherT[DBIO, ErrorMessage, Reservation] = {
+  private def insertReservation(request: CreateReservationRequest): EitherT[DBIO, CinemaError, Reservation] = {
     val reservation = Reservation(
       ReservationId.generate(),
       request.userFirstName,
@@ -76,7 +76,7 @@ class CreateReservationService(
       ReservationConfirmationId.generate(),
       dateTimeProvider.currentInstant()
     )
-    EitherT.right[ErrorMessage](reservationRepository.insert(reservation))
+    EitherT.right[CinemaError](reservationRepository.insert(reservation))
   }
 
   private def createReservationItems(request: CreateReservationRequest, reservationId: ReservationId): Seq[ReservationItem] = {
@@ -96,8 +96,8 @@ class CreateReservationService(
     }
   }
 
-  private def insertReservationItems(items: Seq[ReservationItem]): EitherT[DBIO, ErrorMessage, Seq[ReservationItem]] = {
-    EitherT.right[ErrorMessage](
+  private def insertReservationItems(items: Seq[ReservationItem]): EitherT[DBIO, CinemaError, Seq[ReservationItem]] = {
+    EitherT.right[CinemaError](
       items.traverse(reservationItemRepository.insert)
     )
   }

@@ -13,4 +13,3 @@ Assumptions:
 - every room is a rectangle (by that I mean, seats are aligned in rows and every row has the same amount of seats)
 - user specifies reservations in the following format: I want the following seats for screening X: seat in row 1 column 3 for adult, seat in row 1 column 4 for a child, etc.
 - additional task implemented - Reservation confirmation
-- test coverage is limited due to the limit of time
